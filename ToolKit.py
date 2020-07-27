@@ -37,6 +37,7 @@ def Move_File(FileName):
 AWS tools here
 """
 
+#S3
 def S3_File_Uploud(BucketName,FilePath):
     s3 = boto3.resource('s3')
     try:
@@ -44,6 +45,47 @@ def S3_File_Uploud(BucketName,FilePath):
         s3.Bucket(BucketName).put_object(Key='test.png', Body=data)
     except:
         print("Uanble to uploud file, make sure your bucket names is right and that AWS CLI config is setup") 
+        
+
+#EC2
+def Whats_running():
+    instances = ec2.instances.filter(#fix this
+    Filters=[{'Name': 'instance-state-name', 'Values': ['running']}])
+    for instance in instances:
+        print("ID: ", instance.id, "type:", instance.instance_type)
+    Ask = input("Would you like to stop or terminate an instance? Y/N: ")
+    if Ask == "y" or Ask == "Y" or Ask == "yes" or Ask == "Yes":
+        What_instance = input("What instance would you to stop, enter the instance ID here: ")
+        ids = 'i-062acb652d3a05d03'
+        ec2.instances.filter(InstanceIds = id).stop()
+
+    elif Ask == "n" or "N" or Ask == "no" or Ask == "NO" :
+        pass
+    else:
+        print("Unknown inputer")
+
+def create_instance():
+    while true:
+         AskUsr = input("To make a instance in AWS create or if you would to list out what EC2 create are running type list: ")
+
+         if AskUsr == "create" or AskUsr == "CREATE":
+             instance1 = "Amazon Linux AMI 2018.03.0 (HVM)"
+
+             instance1_Image ='ami-031a03cb800ecb0d5'#sets the instance AMI to the the ARN of Amazon Linux AMI 2018.03.0 (HVM)
+             #Calls the create_instances and sets up a new EC2 (bisc)
+             instance_create = ec2.create_instances(
+             ImageId= instance1_Image ,
+             MinCount=1,
+             MaxCount=1,
+             InstanceType='t2.micro',
+             )
+             print("Set a t2.micro instance with the AMI", instance1)
+         elif AskUsr == "list" or AskUsr == "LIST":#Some code I took form the doumention to list all the running ec2s, hey ifs its not broke.......
+             instances = ec2.instances.filter(
+                Filters=[{'Name': 'instance-state-name', 'Values': ['running']}])
+             for instance in instances:
+                 print(instance.id, instance.instance_type)
+
 
 FilePath = 'test.png'
 BucketName =  "pythontests"
